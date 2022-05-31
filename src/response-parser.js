@@ -8,7 +8,6 @@ function Parser(json){
 Parser.prototype.getSimplified = function(){
     return this.data.map((item)=>{
         if(item.relationships){
-            let d = this.resolveRelationships(item.relationships)
             item.relationships = this.resolveRelationships(item.relationships)
         }
         return item
