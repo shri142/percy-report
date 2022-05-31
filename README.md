@@ -14,7 +14,7 @@ npm install https://githib.com/browserstackce/percy-report.git -g
 
 percy-report generate [options] <buildId>
 
-Genetate Report
+Generate Report
 
 Options:
   --percy-token <percyToken>      Percy ReadOnly or FullAccess Token (default: PERCY_TOKEN Environment Variable)
