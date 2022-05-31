@@ -1,14 +1,24 @@
 {
   "name": "percy-report",
-  "version": "1.0.0",
-  "description": "",
+  "version": "0.0.1",
+  "description": "Percy Report Generator",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/browserstackce/percy-report.git"
+  },
+  "keywords": [
+    "percy",
+    "browserstack",
+    "reports"
+  ],
+  "bugs": {
+    "url": "https://github.com/browserstackce/percy-report/issues"
+  },
+  "license": "Apache-2.0",
   "bin": {
     "percy-report": "./bin/cli.js"
   },

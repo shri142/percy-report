@@ -15,15 +15,15 @@ module.exports.Generate = async function (config) {
         }
     })
     let baseDir = `${downloadPath}/${buildId}`
-    if(!fs.existsSync(baseDir)){
-        fs.mkdirSync(baseDir,{recursive:true})
+    if (!fs.existsSync(baseDir)) {
+        fs.mkdirSync(baseDir, { recursive: true })
     }
     let response = await axios.get(`/snapshots?build_id=${buildId}`, { responseType: 'json' }).then((res) => {
         if (res.status == 200) {
             let parser = new Parser(res.data)
             let data = parser.getSimplified()
             return data
-        }else{
+        } else {
             console.error(res.data)
             return []
         }
@@ -39,34 +39,33 @@ module.exports.Generate = async function (config) {
             images['head'] = getComparisonImage(comp, 'head-screenshot')
             images['diff'] = getComparisonImage(comp, 'diff-image')
             let browser = getComparisonBrowser(comp)
-            Object.assign(comparison,comp.attributes,{images},{browser:browser.name || ''})
+            Object.assign(comparison, comp.attributes, { images }, { browser: browser.name || '' })
             return comparison
         })
         return formattedSnapshot
     })
-    fs.writeFileSync(`${baseDir}/report.json`,JSON.stringify(report,undefined,2))
     if (downloadImages) {
-        for(let i = 0; i < report.length; i++){
+        for (let i = 0; i < report.length; i++) {
             let snapshot = report[i]
-            let name = String(snapshot.name).replace('/','-')
+            let name = String(snapshot.name).replace('/', '-')
             let comparisons = snapshot.comparisons;
-            if(comparisons && Array.isArray(comparisons) && comparisons.length > 0){
-                for(let j = 0; j < comparisons.length; j++){
+            if (comparisons && Array.isArray(comparisons) && comparisons.length > 0) {
+                for (let j = 0; j < comparisons.length; j++) {
                     let comparison = comparisons[j]
                     let images = comparison['images']
-                    for(let image in images){
-                        if(images[image] == undefined) continue;
+                    for (let image in images) {
+                        if (images[image] == undefined) continue;
                         const imageUrl = String(images[image]?.url)
                         let dir = `${baseDir}/${image}`
-                        if(!fs.existsSync(dir)){
-                            fs.mkdirSync(dir,{recursive:true})
+                        if (!fs.existsSync(dir)) {
+                            fs.mkdirSync(dir, { recursive: true })
                         }
                         let path = `${dir}/${name}-${comparison.browser}-${comparison.width}.png`
-                        try{
-                        let file = await new Axios({responseType:'arraybuffer'}).get(imageUrl)
-                        report[i].comparisons[j].images[image]['file'] = path
-                        fs.writeFileSync(path,file.data)
-                        }catch{
+                        try {
+                            let file = await new Axios({ responseType: 'arraybuffer' }).get(imageUrl)
+                            report[i].comparisons[j].images[image]['file'] = `${image}/${name}-${comparison.browser}-${comparison.width}.png`
+                            fs.writeFileSync(path, file.data)
+                        } catch {
                             console.error("Failed to Download: " + path)
                         }
                     }
@@ -74,6 +73,7 @@ module.exports.Generate = async function (config) {
             }
         }
     }
+    fs.writeFileSync(`${baseDir}/report.json`, JSON.stringify(report, undefined, 2))
 }
 
 function getComparisonImage(comparison, key) {
@@ -90,4 +90,4 @@ function getComparisonBrowser(comparison) {
     return comparison.relationships['browser']?.relationships['browser-family']?.attributes
 }
 
-// module.exports.Generate({ buildId: '18183919',downloadImages:true })
+module.exports.Generate({ buildId: '18183919', downloadImages: true })
