@@ -38,6 +38,7 @@ module.exports.Generate = async function (config) {
     })
     let report = {
         totalSnapshots:buildDetails['data']['attributes']['total-snapshots'],
+        buildURL:buildDetails['data']['attributes']['web-url'],
         unreviewedScreenshots:0,
         unreviewedSnapshots:0
     }
@@ -61,6 +62,7 @@ module.exports.Generate = async function (config) {
                 flagChanged = true
             }
             Object.assign(comparison, comp.attributes, { images }, { browser: browser.name || '' })
+            comparison['diff-percentage'] = comparison['diff-ratio']*100
             return comparison
         })
         if(flagChanged){
