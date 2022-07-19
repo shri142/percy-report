@@ -14,7 +14,7 @@ program.command('generate')
 .option('--download-path <downloadPath>',"Directory path where to generate the report","./Report")
 .option('--download-images',"If True Images will be downloaded",false)
 .action(async (args,options)=>{
-  await Generate({buildId:args,...options})
+  let report = await Generate({buildId:args,...options})
 })
 
 program.parse()

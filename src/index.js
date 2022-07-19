@@ -1,6 +1,7 @@
 const { Parser } = require('./response-parser')
 const { Axios } = require('axios')
 const fs = require('fs')
+const {HtmlReportGenerator}  = require('./html-report')
 const defaultConfig = {
     percyToken: process.env.PERCY_TOKEN,
     apiUrl: 'https://percy.io/api/v1',
@@ -18,30 +19,53 @@ module.exports.Generate = async function (config) {
     if (!fs.existsSync(baseDir)) {
         fs.mkdirSync(baseDir, { recursive: true })
     }
-    let response = await axios.get(`/snapshots?build_id=${buildId}`, { responseType: 'json' }).then((res) => {
+    let buildDetails = await axios.get(`/builds/${buildId}`,{responseType:'json'}).then((res)=>{
+        if(res.status == 200){
+            return JSON.parse(res.data)
+        }else{
+            throw res.data
+        }
+    })
+
+    let snapshotsData = await axios.get(`/snapshots?build_id=${buildId}`, { responseType: 'json' }).then((res) => {
         if (res.status == 200) {
             let parser = new Parser(res.data)
             let data = parser.getSimplified()
             return data
         } else {
-            console.error(res.data)
-            return []
+            throw res.data
         }
     })
-    let report = response.map((snapshot) => {
+    let report = {
+        totalSnapshots:buildDetails['data']['attributes']['total-snapshots'],
+        unreviewedScreenshots:0,
+        unreviewedSnapshots:0
+    }
+    report['details'] = snapshotsData.map((snapshot) => {
         let formattedSnapshot = {}
+        let flagChanged = false;
         formattedSnapshot['id'] = snapshot.id
         Object.assign(formattedSnapshot, snapshot.attributes)
         formattedSnapshot['comparisons'] = snapshot.relationships.comparisons?.data.map((comp) => {
             let comparison = {}
             let images = {}
-            images['base'] = getComparisonImage(comp, 'base-screenshot')
-            images['head'] = getComparisonImage(comp, 'head-screenshot')
-            images['diff'] = getComparisonImage(comp, 'diff-image')
+            let base = images['base'] = getComparisonImage(comp, 'base-screenshot')
+            let head = images['head'] = getComparisonImage(comp, 'head-screenshot')
+            let diff = images['diff'] = getComparisonImage(comp, 'diff-image')
             let browser = getComparisonBrowser(comp)
+            if(diff){
+                report['unreviewedScreenshots']++
+                flagChanged = true
+            }else if(head && !base){
+                report['unreviewedScreenshots']++
+                flagChanged = true
+            }
             Object.assign(comparison, comp.attributes, { images }, { browser: browser.name || '' })
             return comparison
         })
+        if(flagChanged){
+            report['unreviewedSnapshots']++
+        }
         return formattedSnapshot
     })
     if (downloadImages) {
@@ -74,6 +98,8 @@ module.exports.Generate = async function (config) {
         }
     }
     fs.writeFileSync(`${baseDir}/report.json`, JSON.stringify(report, undefined, 2))
+    HtmlReportGenerator(config,report)
+    return report
 }
 
 function getComparisonImage(comparison, key) {
@@ -89,5 +115,3 @@ function getComparisonImage(comparison, key) {
 function getComparisonBrowser(comparison) {
     return comparison.relationships['browser']?.relationships['browser-family']?.attributes
 }
-
-module.exports.Generate({ buildId: '18183919', downloadImages: true })
