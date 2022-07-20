@@ -5,10 +5,11 @@ const {HtmlReportGenerator}  = require('./html-report')
 const defaultConfig = {
     percyToken: process.env.PERCY_TOKEN,
     apiUrl: 'https://percy.io/api/v1',
-    downloadPath: './Reports'
+    downloadPath: './Reports',
+    diffThreshold: 1
 }
 module.exports.Generate = async function (config) {
-    let { buildId, percyToken, apiUrl, downloadImages, downloadPath } = Object.assign({}, defaultConfig, config)
+    let { buildId, percyToken, apiUrl, downloadImages, downloadPath , diffThreshold} = Object.assign({}, defaultConfig, config)
     let axios = new Axios({
         baseURL: apiUrl,
         headers: {
@@ -62,7 +63,12 @@ module.exports.Generate = async function (config) {
                 flagChanged = true
             }
             Object.assign(comparison, comp.attributes, { images }, { browser: browser.name || '' })
-            comparison['diff-percentage'] = comparison['diff-ratio']*100
+            
+            comparison['diff-percentage'] = (comparison['diff-ratio']*100).toFixed(2)
+            comparison['diff-color'] = "yellow"
+            if (comparison['diff-percentage'] > diffThreshold) {
+                comparison['diff-color'] = "red"
+            }
             return comparison
         })
         if(flagChanged){

@@ -11,6 +11,7 @@ program.command('generate')
 .description('Genetate Report')
 .argument('<buildId>')
 .option('--percy-token <percyToken>',"Percy ReadOnly or FullAccess Token",process.env.PERCY_TOKEN)
+.option('--diff-threshold <diffThreshold>',"Percy Diff Percentage Threshold to highlight")
 .option('--download-path <downloadPath>',"Directory path where to generate the report","./Report")
 .option('--download-images',"If True Images will be downloaded",false)
 .action(async (args,options)=>{
