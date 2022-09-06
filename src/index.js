@@ -27,7 +27,7 @@ module.exports.Generate = async function (config) {
             throw res.data
         }
     })
-
+    console.log(buildDetails)
     let snapshotsData = await axios.get(`/snapshots?build_id=${buildId}`, { responseType: 'json' }).then((res) => {
         if (res.status == 200) {
             let parser = new Parser(res.data)
@@ -38,10 +38,13 @@ module.exports.Generate = async function (config) {
         }
     })
     let report = {
+        totalScreenshots:0,
         totalSnapshots:buildDetails['data']['attributes']['total-snapshots'],
         buildURL:buildDetails['data']['attributes']['web-url'],
         unreviewedScreenshots:0,
-        unreviewedSnapshots:0
+        unreviewedSnapshots:0,
+        widths:[],
+        browsers:[]
     }
     report['details'] = snapshotsData.map((snapshot) => {
         let formattedSnapshot = {}
@@ -55,6 +58,7 @@ module.exports.Generate = async function (config) {
             let head = images['head'] = getComparisonImage(comp, 'head-screenshot')
             let diff = images['diff'] = getComparisonImage(comp, 'diff-image')
             let browser = getComparisonBrowser(comp)
+            report['totalScreenshots']++
             if(diff){
                 report['unreviewedScreenshots']++
                 flagChanged = true
@@ -63,7 +67,12 @@ module.exports.Generate = async function (config) {
                 flagChanged = true
             }
             Object.assign(comparison, comp.attributes, { images }, { browser: browser.name || '' })
-            
+            if(!report.browsers.includes(browser.name)){
+                report.browsers.push(browser.name)
+            }
+            if(!report.widths.includes(comparison['width'])){
+                report.widths.push(comparison['width'])
+            }
             comparison['diff-percentage'] = (comparison['diff-ratio']*100).toFixed(2)
             comparison['diff-color'] = "yellow"
             if (comparison['diff-percentage'] > diffThreshold) {
