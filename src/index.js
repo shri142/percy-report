@@ -27,7 +27,6 @@ module.exports.Generate = async function (config) {
             throw res.data
         }
     })
-    console.log(buildDetails)
     let snapshotsData = await axios.get(`/snapshots?build_id=${buildId}`, { responseType: 'json' }).then((res) => {
         if (res.status == 200) {
             let parser = new Parser(res.data)
