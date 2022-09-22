@@ -10,6 +10,7 @@ const defaultConfig = {
 }
 module.exports.Generate = async function (config) {
     let { buildId, percyToken, apiUrl, downloadImages, downloadPath , diffThreshold} = Object.assign({}, defaultConfig, config)
+    console.log(`Generating Report for build ${buildId}`)
     let axios = new Axios({
         baseURL: apiUrl,
         headers: {
@@ -27,6 +28,21 @@ module.exports.Generate = async function (config) {
             throw res.data
         }
     })
+    while(buildDetails.data && buildDetails.data.attributes.state !== 'finished'){
+        console.log("Waiting for build to process...")
+        await wait(30000)
+        buildDetails = await axios.get(`/builds/${buildId}`,{responseType:'json'}).then((res)=>{
+            if(res.status == 200){
+                return JSON.parse(res.data)
+            }else{
+                throw res.data
+            }
+        })
+        if(buildDetails.data.attributes.state === 'error'){
+            throw new Error("Build Failed with an Error on Percy Server. Please check your percy dashboard for more information.")
+        }
+    }
+    console.log("Build Finished Processing.")
     let snapshotsData = await axios.get(`/snapshots?build_id=${buildId}`, { responseType: 'json' }).then((res) => {
         if (res.status == 200) {
             let parser = new Parser(res.data)
@@ -130,4 +146,12 @@ function getComparisonImage(comparison, key) {
 
 function getComparisonBrowser(comparison) {
     return comparison.relationships['browser']?.relationships['browser-family']?.attributes
+}
+
+async function wait(ms){
+    return new Promise((resolve)=>{
+        setTimeout(()=>{
+            resolve()
+        },ms)
+    })
 }

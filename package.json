@@ -24,13 +24,13 @@
     "percy-report": "./bin/cli.js"
   },
   "dependencies": {
+    "@percy/cli": "^1.10.3",
     "axios": "^0.27.2",
     "chromedriver": "^105.0.0",
     "commander": "^9.4.0",
     "ejs": "^3.1.8"
   },
   "devDependencies": {
-    "@percy/cli": "^1.10.1",
     "@percy/selenium-webdriver": "^1.0.2"
   }
 }
