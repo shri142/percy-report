@@ -1,4 +1,5 @@
-# Percy Report Generator
+# Percy Report Generator <img src="https://files.readme.io/369dd84-logo-dark-icon-32.svg" width="60" height="60" >
+
 
 ## Installation
 
