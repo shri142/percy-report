@@ -5,7 +5,7 @@
 
 ```sh
 
-npm install https://githib.com/browserstackce/percy-report.git -g
+npm install https://github.com/browserstackce/percy-report.git -g
 
 ```
 
