@@ -11,7 +11,8 @@
     <style>
         img {
             width: 100%;
-            height: 100%;
+            object-fit: contain;
+            border: 1px solid gray;
         }
 
         .comparison-container {
@@ -33,11 +34,23 @@
             width: 30px;
             height: 30px;
         }
+        .color-red{
+            background-color: red !important;
+            color: white !important;
+        }
+        .color-green{
+            background-color: green !important;
+            color: white !important;
+        }
     </style>
     <script type="text/javascript">
         function onClickOverlay(e, element) {
-            let hidden = e.currentTarget.querySelector(".overlay").hidden
-            e.currentTarget.querySelector(".overlay").hidden = !hidden
+            let hidden = e.currentTarget.querySelector(".overlay").classList.contains('d-none')
+            if(hidden){
+                e.currentTarget.querySelector(".overlay").classList.remove('d-none')
+            }else{
+                e.currentTarget.querySelector(".overlay").classList.add('d-none')
+            }
         }
         const snapshots = JSON.parse('<%- JSON.stringify(details.map(snp=>snp.name)) %>')
         const widths = JSON.parse('<%- JSON.stringify(widths) %>')
@@ -48,6 +61,7 @@
             widthSelect = document.getElementById('select-width')
             browserSelect = document.getElementById('select-browser')
             images = document.getElementsByTagName('img')
+            tables = document.getElementsByTagName('table')
             snapshotSelect.addEventListener('change', ApplyFilter)
             widthSelect.addEventListener('change', ApplyFilter)
             browserSelect.addEventListener('change', ApplyFilter)
@@ -55,12 +69,17 @@
         })
 
         function ApplyFilter() {
-            const shouldEnableImage = (dataset) => {
+            const shouldEnable = (dataset) => {
                 return (snapshotSelect.value == "All" || snapshotSelect.value == dataset.name) && widthSelect.value == dataset.width && browserSelect.value == dataset.browser
             }
             for (let i = 0; i < images.length; i++) {
                 let image = images.item(i)
-                image.hidden = !shouldEnableImage(image.dataset)
+                image.hidden = !shouldEnable(image.dataset)
+            }
+            console.log(tables)
+            for(let i = 0; i < tables.length; i++){
+                let table = tables.item(i)
+                table.hidden = !shouldEnable(table.dataset)
             }
         }
     </script>
@@ -155,15 +174,25 @@
             <hr>
             <% for(let snapshot of details){ %>
                 <% for(let comparison of snapshot.comparisons){ %>
-                    <div class="row g-0">
-                        <div class="col-md-6">
+                    <div class="row gx-2">
+                        <div class="col-md-12">
+                            <table hidden data-type="diff-ratio" data-name="<%= snapshot.name %>"
+                                data-width="<%= comparison.width %>" data-browser="<%= comparison.browser %>" class="m-3">
+                               <tbody>
+                                   <tr>
+                                       <td>Diff Ratio:</td>
+                                       <td class="color-<%= comparison['diff-color'] %>" ><%= comparison['diff-percentage'] %></td>
+                                   </tr>
+                               </tbody>
+                            </table>
+                        </div>
+                        <div class="col-md-6 image-container">
                             <img hidden data-type="base" data-name="<%= snapshot.name %>"
                                 data-width="<%= comparison.width %>" data-browser="<%= comparison.browser %>"
                                 src="<%= comparison.images['base']?.url %>" alt="No Base Image Found">
                         </div>
-
-                        <% if(!comparison.images['base'] || comparison.images['diff']){ %>
-                            <div onclick="onClickOverlay(event,this)" class="col-md-6 comparison-container">
+                        <% if(!comparison.images['base'] || comparison.images['diff'] || comparison.images['head']){ %>
+                            <div onclick="onClickOverlay(event,this)" class="col-md-6 image-container comparison-container">
                                 <img hidden data-type="head" data-name="<%= snapshot.name %>"
                                     data-width="<%= comparison.width %>" data-browser="<%= comparison.browser %>"
                                     src="<%= comparison.images['head']?.url %>" alt="No Head Image Found">

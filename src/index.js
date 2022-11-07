@@ -10,7 +10,6 @@ const defaultConfig = {
 }
 module.exports.Generate = async function (config) {
     let { buildId, percyToken, apiUrl, downloadImages, downloadPath , diffThreshold} = Object.assign({}, defaultConfig, config)
-    console.log(`Generating Report for build ${buildId}`)
     let axios = new Axios({
         baseURL: apiUrl,
         headers: {
@@ -29,7 +28,7 @@ module.exports.Generate = async function (config) {
         }
     })
     while(buildDetails.data && buildDetails.data.attributes.state !== 'finished'){
-        console.log("Waiting for build to process...")
+        console.log("Waiting for build to complete on Percy...")
         await wait(30000)
         buildDetails = await axios.get(`/builds/${buildId}`,{responseType:'json'}).then((res)=>{
             if(res.status == 200){
@@ -42,7 +41,7 @@ module.exports.Generate = async function (config) {
             throw new Error("Build Failed with an Error on Percy Server. Please check your percy dashboard for more information.")
         }
     }
-    console.log("Build Finished Processing.")
+    console.log(`Generating report for Build ID ${buildId}`)
     let snapshotsData = await axios.get(`/snapshots?build_id=${buildId}`, { responseType: 'json' }).then((res) => {
         if (res.status == 200) {
             let parser = new Parser(res.data)
@@ -131,6 +130,7 @@ module.exports.Generate = async function (config) {
     }
     fs.writeFileSync(`${baseDir}/report.json`, JSON.stringify(report, undefined, 2))
     HtmlReportGenerator(config,report)
+    console.log("Build Report Generated.")
     return report
 }
 

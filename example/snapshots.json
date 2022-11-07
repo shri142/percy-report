@@ -1,6 +1,10 @@
 [
     {
         "name": "Snapshot one",
+        "url": "https://bstackdemo.com/signin"
+    },
+    {
+        "name": "Snapshot two",
         "url": "https://bstackdemo.com"
     }
 ]
