@@ -76,10 +76,12 @@
                 let image = images.item(i)
                 image.hidden = !shouldEnable(image.dataset)
             }
-            console.log(tables)
+
             for(let i = 0; i < tables.length; i++){
                 let table = tables.item(i)
-                table.hidden = !shouldEnable(table.dataset)
+                if(table.id !== "build-details"){
+                    table.hidden = !shouldEnable(table.dataset)
+                }
             }
         }
     </script>
@@ -89,7 +91,7 @@
     <div class="container">
         <h1 class="my-3 text-center"> <u> PERCY REPORT</u></h1>
         <h4 class="my-3 text-center"> <u> <a href="<%= buildURL %>">Go to Percy Dashboard</a> </u></h3>
-            <table class="table table-bordered table-striped">
+            <table class="table table-bordered table-striped" id="build-details">
                 <thead>
                     <th class="text-center">Build ID</th>
                     <th class="text-center">Browsers</th>
