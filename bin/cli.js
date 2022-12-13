@@ -18,4 +18,12 @@ program.command('generate')
   let report = await Generate({buildId:args,...options})
 })
 
+program.command('summary')
+.option("--daily")
+.option("--weekly")
+.description('Generate Daily Summary')
+.action(async (args,options)=>{
+
+})
+
 program.parse()
