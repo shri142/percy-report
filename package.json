@@ -3,10 +3,7 @@
   "version": "0.0.1",
   "description": "Percy Report Generator",
   "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "takeSnapshot": "npx percy snapshot tests/snapshots.yml"
-  },
+  "scripts": {},
   "repository": {
     "type": "git",
     "url": "git+https://github.com/browserstackce/percy-report.git"
@@ -24,10 +21,11 @@
     "percy-report": "./bin/cli.js"
   },
   "dependencies": {
-    "@percy/cli": "^1.10.3",
+    "@percy/cli": "^1.16.0",
     "axios": "^0.27.2",
     "chromedriver": "^105.0.0",
     "commander": "^9.4.0",
+    "date-fns": "^2.29.3",
     "ejs": "^3.1.8"
   },
   "devDependencies": {

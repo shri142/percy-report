@@ -44,6 +44,9 @@
             background-color: green !important;
             color: white !important;
         }
+        select{
+            max-width: 100%;
+        }
     </style>
     <script type="text/javascript">
         function onClickOverlay(e, element) {
@@ -196,17 +199,17 @@
                         <div class="col-md-6 image-container">
                             <img hidden data-type="base" data-name="<%= snapshot.name %>"
                                 data-width="<%= comparison.width %>" data-browser="<%= comparison.browser %>"
-                                src="<%= comparison.images['base']?.url %>" alt="No Base Image Found">
+                                src="<%= comparison.images['base']?.file || comparison.images['base']?.url %>" alt="No Base Image Found">
                         </div>
                         <% if(!comparison.images['base'] || comparison.images['diff'] || comparison.images['head']){ %>
                             <div onclick="onClickOverlay(event,this)" class="col-md-6 image-container comparison-container">
                                 <img hidden data-type="head" data-name="<%= snapshot.name %>"
                                     data-width="<%= comparison.width %>" data-browser="<%= comparison.browser %>"
-                                    src="<%= comparison.images['head']?.url %>" alt="No Head Image Found">
+                                    src="<%= comparison.images['head'].file || comparison.images['head']?.url %>" alt="No Head Image Found">
                                 <% if (comparison.images['diff']) { %> <img hidden data-type="diff"
                                         data-name="<%= snapshot.name %>" data-width="<%= comparison.width %>"
                                         data-browser="<%= comparison.browser %>" class="overlay"
-                                        src="<%= comparison.images['diff']?.url %>" alt="">
+                                        src="<%= comparison.images['diff']?.file || comparison.images['diff']?.url %>" alt="">
                                     <% } %>
                             </div>
                             <% } %>

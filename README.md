@@ -9,17 +9,25 @@ npm install https://github.com/browserstackce/percy-report.git -g
 
 ```
 
+<h3> Export Percy Token </h3>
+Get percy Read Only or Full Access token from your percy project settings & export it
+
+```
+export PERCY_TOKEN=<read-only | full-access>
+```
+
+
 ## Usage
 
 <h3>Using the Generate Report functionality independently</h3>
 
 ```sh
-percy-report generate [options] <buildId>
+percy-report [options] generate <buildId>
 ```
 Note: Build ID can be found in the URL of the Percy Dashboard as well as the REST API data.
 Example Build URL: `https://percy.io/<projectId>/PercyReporting/builds/<buildId>`
 
-<h3>Options for percy-report :</h3>
+<h3>Options for percy-report generate :</h3>
 
 ```sh
   --percy-token <percyToken>      Percy ReadOnly or FullAccess Token (default: PERCY_TOKEN Environment Variable)
@@ -38,6 +46,21 @@ Step 3 : Execute the Percy Report Generation Step<br>
 [Example](/example/percy.sh):
 ```sh
 export PERCY_TOKEN=<your-percy-token>
-BUILD_ID=$(npx percy snapshot ./example/snapshots.json | grep build | awk -F "/" '{print $NF}')
+BUILD_ID=$(npx percy exec -- {Test Command} | grep build | awk -F "/" '{print $NF}')
 npx percy-report generate $BUILD_ID
+```
+
+<h3>Using Summary functionality </h3>
+
+```sh
+percy-report [options] summary <project-slug>
+```
+
+<h3>Options for summary functionlity</h3>
+
+```sh
+  --percy-token <percyToken>  Percy ReadOnly or FullAccess Token
+  --day                       Generate today\'s summary report
+  --week                      Generate current week\'s summary report
+  -h, --help                  display help for command
 ```

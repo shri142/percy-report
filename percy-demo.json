@@ -1,0 +1,23 @@
+{
+  "totalBuilds": 18,
+  "totalBuildsApproved": 10,
+  "totalBuildsUnreviewed": 6,
+  "totalBuildsFailed": 2,
+  "totalBuildsRequestingChanges": 0,
+  "totalSnapshots": 192,
+  "totalSnapshotsRequestingChanges": 0,
+  "totalSnapshotsUnreviewed": 70,
+  "totalSnapshotsReviewed": 122,
+  "totalComparisons": 2580,
+  "browsers": [
+    "Safari",
+    "Safari on iPhone",
+    "Chrome on Android",
+    "Firefox",
+    "Chrome",
+    "Edge"
+  ],
+  "projectName": "percy-demo",
+  "startDate": "2022-12-10T18:30:00.000Z",
+  "endDate": "2022-12-17T18:29:59.999Z"
+}
