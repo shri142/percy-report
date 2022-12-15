@@ -19,7 +19,7 @@ export PERCY_TOKEN=<read-only | full-access>
 
 ## Usage
 
-<h3>Using the Generate Report functionality independently</h3>
+<h3>Generate Report - Per Build</h3>
 
 ```sh
 percy-report [options] generate <buildId>
@@ -37,7 +37,7 @@ Example Build URL: `https://percy.io/<projectId>/PercyReporting/builds/<buildId>
   -h, --help                      display help for command
 ```
 
-<h3>Using the Generate Report functionality along with Percy Runs</h3>
+<h3>Generate Report along with Percy Runs</h3>
 
 Step 1 : Run the Percy Build<br>
 Step 2 : Extract the Percy Build ID from the Percy run<br>
@@ -50,7 +50,7 @@ BUILD_ID=$(npx percy exec -- {Test Command} | grep build | awk -F "/" '{print $N
 npx percy-report generate $BUILD_ID
 ```
 
-<h3>Using Summary functionality </h3>
+<h3>Generate Project Summary</h3>
 
 ```sh
 percy-report [options] summary <project-slug>
