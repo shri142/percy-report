@@ -56,6 +56,8 @@ npx percy-report generate $BUILD_ID
 percy-report [options] summary <project-slug>
 ```
 
+Note: Project Slug is equal to Project Name on your percy dashboard
+
 <h3>Options for summary functionlity</h3>
 
 ```sh
