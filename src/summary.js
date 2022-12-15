@@ -26,6 +26,7 @@ module.exports.Summary = async function (opts) {
         }
     })
     let projectId = project.data.id
+    let projectURL = "https://percy.io/"+project.data.attributes['full-slug']
     let projectName = project.data.attributes.name
     let browsers = project["included"].filter((i) => i['type'] == 'browser-families')?.map((v) => v['attributes'].name)
     let startDate = day ? startOfDay(Date.now()) : week ? startOfWeek(Date.now()) : startOfDay(Date.now())
@@ -47,6 +48,7 @@ module.exports.Summary = async function (opts) {
             totalSnapshotsUnreviewed: 0,
             totalSnapshotsReviewed: 0,
             totalComparisons: 0,
+            projectURL: projectURL,
         },_summary)
         if (cursor) {
             urlParams['page[cursor]'] = cursor
