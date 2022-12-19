@@ -1,5 +1,5 @@
 const { Axios } = require('axios')
-const { startOfDay, startOfWeek, endOfDay, endOfWeek, isAfter, isBefore } = require('date-fns')
+const { startOfDay, startOfWeek, endOfDay, endOfWeek, isAfter, isBefore,intervalToDuration } = require('date-fns')
 const fs = require('fs')
 const { HtmlSummary } = require('./html-render')
 const defaultOptions = {
@@ -7,10 +7,20 @@ const defaultOptions = {
     apiUrl: 'https://percy.io/api/v1',
 }
 module.exports.Summary = async function (opts) {
-    let { percyToken, day, week, projectSlug, apiUrl,filename } = Object.assign(defaultOptions, opts)
-    if (day && week) {
-        throw new Error("week & day cannot be supplied together")
+    let { percyToken, startDate, endDate, projectSlug, apiUrl } = Object.assign(defaultOptions, opts)
+    startDate = new Date(startDate)
+    endDate = new Date(endDate)
+ 
+    if(!startDate){
+        throw new Error("Start Date is required")
     }
+    if(!endDate){
+        throw new Error("End Date is required")
+    }
+    if(intervalToDuration({start:startDate,end:endDate}).days > 30){
+        throw new Error("Interval between start & end date should be less than 30days")
+    }
+
     let axios = new Axios({
         baseURL: apiUrl,
         headers: {
@@ -29,8 +39,6 @@ module.exports.Summary = async function (opts) {
     let projectURL = "https://percy.io/"+project.data.attributes['full-slug']
     let projectName = project.data.attributes.name
     let browsers = project["included"].filter((i) => i['type'] == 'browser-families')?.map((v) => v['attributes'].name)
-    let startDate = day ? startOfDay(Date.now()) : week ? startOfWeek(Date.now()) : startOfDay(Date.now())
-    let endDate = day ? endOfDay(Date.now()) : week ? endOfWeek(Date.now()) : endOfDay(Date.now())
     const buildSummary = async (cursor, _summary) => {
         let done = false
         let urlParams = {
@@ -49,6 +57,8 @@ module.exports.Summary = async function (opts) {
             totalSnapshotsReviewed: 0,
             totalComparisons: 0,
             projectURL: projectURL,
+            unreviewedBuilds:[],
+            failedBuilds:[]
         },_summary)
         if (cursor) {
             urlParams['page[cursor]'] = cursor
@@ -62,9 +72,9 @@ module.exports.Summary = async function (opts) {
         })
         for (let build of _builds.data) {
             let createdAt = new Date(build.attributes["created-at"])
-            if (isAfter(createdAt, endDate) || isBefore(createdAt, startDate)) {
+            if (isBefore(createdAt, startDate)) {
                 done = true;
-                break
+                continue
             }
             if (isBefore(createdAt, endDate) && isAfter(createdAt, startDate)) {
                 summary['totalBuilds']++;
@@ -73,9 +83,19 @@ module.exports.Summary = async function (opts) {
                 }
                 if(build['attributes']['review-state'] == 'unreviewed'){
                     summary['totalBuildsUnreviewed'] ++
+                    summary['unreviewedBuilds'].push({
+                        timestamp:new Date(build.attributes["created-at"]),
+                        buildUrl:build['attributes']['web-url'],
+                        buildNo:build['attributes']['build-number']
+                    })
                 }
                 if(build['attributes']['review-state'] == null){
                     summary['totalBuildsFailed'] ++;
+                    summary['failedBuilds'].push({
+                        timestamp:new Date(build.attributes["created-at"]),
+                        buildUrl:build['attributes']['web-url'],
+                        buildNo:build['attributes']['build-number']
+                    })
                 }
                 if(build['attributes']['review-state'] == 'changes_requested'){
                     summary['totalBuildsRequestingChanges'] ++;

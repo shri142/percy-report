@@ -12,8 +12,13 @@ function HtmlReportGenerator(config,jsonReport){
 function HtmlSummary(summary,filename){
     let template_path = path.resolve(__dirname,'template/summary.html')
     const template = fs.readFileSync(template_path,{encoding:"utf-8"}).toString()
+    try{
     let htmlSummary = ejs.render(template,summary)
     fs.writeFileSync(filename,htmlSummary)
+    }catch(err){
+        console.log(err)
+    }
+   
 }
 
 module.exports.HtmlReportGenerator = HtmlReportGenerator
