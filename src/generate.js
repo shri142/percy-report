@@ -51,6 +51,11 @@ module.exports.Generate = async function (config) {
             throw res.data
         }
     })
+    buildURL = buildDetails['data']['attributes']['web-url']
+    projectURL = buildURL.split("/builds/")[0]
+    projectName = projectURL.split('/').slice(-1)[0]
+    console.log(projectURL);
+
     let report = {
         totalScreenshots: 0,
         totalSnapshots: buildDetails['data']['attributes']['total-snapshots'],
@@ -58,7 +63,10 @@ module.exports.Generate = async function (config) {
         unreviewedScreenshots: 0,
         unreviewedSnapshots: 0,
         widths: [],
-        browsers: []
+        browsers: [],
+        projectURL : projectURL,
+        buildNumber: buildDetails['data']['attributes']['build-number'],
+        projectName: projectName
     }
     report['details'] = snapshotsData.map((snapshot) => {
         let formattedSnapshot = {}

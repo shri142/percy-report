@@ -97,11 +97,11 @@
 
 <body class="p-5">
     <div class="container">
-        <h1 class="my-3 text-center"> <u> PERCY REPORT</u></h1>
-        <h4 class="my-3 text-center"> <u> <a href="<%= buildURL %>">Go to Percy Dashboard</a> </u></h3>
+        <h1 class="my-3 text-center"> <u> <%= projectName %> </u></h1>
+        <h4 class="my-3 text-center"> <u> <a href="<%= buildURL %>">Go to Percy Dashboard Build</a> </u></h3>
             <table class="table table-bordered table-striped" id="build-details">
                 <thead>
-                    <th class="text-center">Build ID</th>
+                    <th class="text-center">Build Number</th>
                     <th class="text-center">Browsers</th>
                     <th class="text-center">Total Snapshots</th>
                     <th class="text-center">Total Screenshots</th>
@@ -111,7 +111,7 @@
                 <tbody>
                     <tr>
                         <td class="text-center">
-                            <%= buildId %>
+                            <%= buildNumber %>
                         </td>
                         <td class="text-center">
                             <% if(browsers.includes('Safari')) { %>
