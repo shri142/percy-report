@@ -67,4 +67,4 @@ Note: Project Slug is equal to Project Name on your percy dashboard
   -h, --help                  display help for command
 ```
 
-*Note: Internal between start date and end date should not exceed 30 days.*
+*Note: Interval between start date and end date should not exceed 30 days.*
