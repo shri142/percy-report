@@ -62,7 +62,9 @@ Note: Project Slug is equal to Project Name on your percy dashboard
 
 ```sh
   --percy-token <percyToken>  Percy ReadOnly or FullAccess Token
-  --day                       Generate today\'s summary report
-  --week                      Generate current week\'s summary report
+  --start-date <start-date>   Consider builds created on greater than equal to start date(mm/dd/yyyy)
+  --end-date <end-date>       Consider builds created on less than equal to end date(mm/dd/yyyy)
   -h, --help                  display help for command
 ```
+
+*Note: Internal between start date and end date should not exceed 30 days.*
