@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require('dotenv').config()
 const { Command } = require('commander');
 const { ar } = require('date-fns/locale');
 const { Generate,Summary } = require('../src');

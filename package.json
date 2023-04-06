@@ -26,6 +26,7 @@
     "chromedriver": "^105.0.0",
     "commander": "^9.4.0",
     "date-fns": "^2.29.3",
+    "dotenv": "^16.0.3",
     "ejs": "^3.1.8"
   },
   "devDependencies": {
