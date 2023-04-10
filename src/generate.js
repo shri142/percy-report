@@ -29,7 +29,6 @@ module.exports.Generate = async function (config) {
         }
     })
     const isApp = buildDetails['data']['attributes']['type'] == 'app'
-    console.log(isApp)
     while (buildDetails.data && buildDetails.data.attributes.state !== 'finished') {
         console.log("Waiting for build to complete on Percy...")
         await wait(30000)
@@ -44,6 +43,7 @@ module.exports.Generate = async function (config) {
             throw new Error("Build Failed with an Error on Percy Server. Please check your percy dashboard for more information.")
         }
     }
+    
     console.log(`Generating report for Build ID ${buildId}`)
     let snapshotsData = await axios.get(`/snapshots?build_id=${buildId}`, { responseType: 'json' }).then((res) => {
         if (res.status == 200) {
@@ -138,7 +138,7 @@ module.exports.Generate = async function (config) {
         return formattedSnapshot
     })
     fs.writeFileSync(`${baseDir}/report.json`, JSON.stringify(report, undefined, 2))
-    HtmlReportGenerator(config, report)
+    HtmlReportGenerator(config, report, isApp)
     console.log("Build Report Generated.")
     return report
 }

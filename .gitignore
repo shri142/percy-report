@@ -106,3 +106,4 @@ dist
 Report/
 .DS_Store
 Summary/
+.vscode
