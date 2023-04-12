@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+require('dotenv').config()
 const { Command } = require('commander');
 const { ar } = require('date-fns/locale');
 const { Generate,Summary } = require('../src');
@@ -7,7 +8,7 @@ const {endOfDay,startOfDay} = require('date-fns')
 
 program.name('percy-report')
 .description('Generate Percy Reports & Download Images Locally')
-.version('0.0.1')
+.version('0.0.2')
 
 program.command('generate')
 .description('Genetate Report')

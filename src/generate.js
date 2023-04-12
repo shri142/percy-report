@@ -1,3 +1,4 @@
+
 const { Parser } = require('./response-parser')
 const { Axios } = require('axios')
 const fs = require('fs')
@@ -27,6 +28,7 @@ module.exports.Generate = async function (config) {
             throw res.data
         }
     })
+    const isApp = buildDetails['data']['attributes']['type'] == 'app'
     while (buildDetails.data && buildDetails.data.attributes.state !== 'finished') {
         console.log("Waiting for build to complete on Percy...")
         await wait(30000)
@@ -41,6 +43,7 @@ module.exports.Generate = async function (config) {
             throw new Error("Build Failed with an Error on Percy Server. Please check your percy dashboard for more information.")
         }
     }
+    
     console.log(`Generating report for Build ID ${buildId}`)
     let snapshotsData = await axios.get(`/snapshots?build_id=${buildId}`, { responseType: 'json' }).then((res) => {
         if (res.status == 200) {
@@ -54,7 +57,6 @@ module.exports.Generate = async function (config) {
     buildURL = buildDetails['data']['attributes']['web-url']
     projectURL = buildURL.split("/builds/")[0]
     projectName = projectURL.split('/').slice(-1)[0]
-    console.log(projectURL);
 
     let report = {
         totalScreenshots: 0,
@@ -64,7 +66,8 @@ module.exports.Generate = async function (config) {
         unreviewedSnapshots: 0,
         widths: [],
         browsers: [],
-        projectURL : projectURL,
+        devices: [],
+        projectURL: projectURL,
         buildNumber: buildDetails['data']['attributes']['build-number'],
         projectName: projectName
     }
@@ -79,13 +82,29 @@ module.exports.Generate = async function (config) {
             let base = images['base'] = getComparisonImage(comp, 'base-screenshot')
             let head = images['head'] = getComparisonImage(comp, 'head-screenshot')
             let diff = images['diff'] = getComparisonImage(comp, 'diff-image')
-            let browser = getComparisonBrowser(comp)
+            let compTag;
+            if (isApp) {
+                let device = getComparisonDevice(comp)
+                compTag = device.name
+                if(!report.devices.includes(device.name)){
+                    report.devices.push(device.name)
+                }
+            } else {
+                let browser = getComparisonBrowser(comp)
+                compTag = device.nam
+                if (!report.browsers.includes(browser.name)) {
+                    report.browsers.push(browser.name)
+                }
+                if (!report.widths.includes(comparison['width'])) {
+                    report.widths.push(comparison['width'])
+                }
+            }
             if (downloadImages) {
                 ['base', 'head', 'diff'].forEach((val) => {
                     if (images[val]) {
                         images[val].file = downloadImage({
                             name: String(snapshot?.['attributes'].name).replace('/', '-'),
-                            browser: browser.name,
+                            compTag,
                             width: images[val].width,
                             type: val,
                             baseDir,
@@ -102,13 +121,9 @@ module.exports.Generate = async function (config) {
                 report['unreviewedScreenshots']++
                 flagChanged = true
             }
-            Object.assign(comparison, comp.attributes, { images }, { browser: browser.name || '' })
-            if (!report.browsers.includes(browser.name)) {
-                report.browsers.push(browser.name)
-            }
-            if (!report.widths.includes(comparison['width'])) {
-                report.widths.push(comparison['width'])
-            }
+            Object.assign(comparison, comp.attributes, { images }, isApp?{ device:compTag }:{browser:compTag})
+           
+            
             comparison['diff-percentage'] = (comparison['diff-ratio'] * 100).toFixed(2)
             comparison['diff-color'] = "yellow"
             if (comparison['diff-percentage'] > diffThreshold) {
@@ -122,10 +137,11 @@ module.exports.Generate = async function (config) {
         return formattedSnapshot
     })
     fs.writeFileSync(`${baseDir}/report.json`, JSON.stringify(report, undefined, 2))
-    HtmlReportGenerator(config, report)
+    HtmlReportGenerator(config, report, isApp)
     console.log("Build Report Generated.")
     return report
 }
+
 
 function getComparisonImage(comparison, key) {
     let screenshot = comparison.relationships[key]
@@ -141,20 +157,24 @@ function getComparisonBrowser(comparison) {
     return comparison.relationships['browser']?.relationships['browser-family']?.attributes
 }
 
+function getComparisonDevice(comparison) {
+    return comparison.relationships['comparison-tag']?.attributes
+}
+
 function downloadImage(options) {
-    let { name, browser, width, type, baseDir, url } = options
-    if(!fs.existsSync(`${baseDir}/${type}`)){
-        fs.mkdirSync(`${baseDir}/${type}`,{recursive:true})
+    let { name, width, type, baseDir, url,compTag } = options
+    if (!fs.existsSync(`${baseDir}/${type}`)) {
+        fs.mkdirSync(`${baseDir}/${type}`, { recursive: true })
     }
-    let path = `${baseDir}/${type}/${name}-${browser}-${width}.png`
+    let path = `${baseDir}/${type}/${name}-${compTag}-${width}.png`
     try {
-        new Axios({ responseType: 'arraybuffer',url:url }).get(url).then((file) => {
+        new Axios({ responseType: 'arraybuffer', url: url }).get(url).then((file) => {
             console.log("Download Complete:" + path)
             fs.writeFileSync(path, file.data)
         }).catch((err) => {
             console.error("Failed to Download: " + path)
         })
-        return `./${type}/${name}-${browser}-${width}.png`;
+        return `file:./${type}/${name}-${compTag}-${width}.png`;
     } catch {
 
     }
