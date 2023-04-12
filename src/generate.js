@@ -57,7 +57,6 @@ module.exports.Generate = async function (config) {
     buildURL = buildDetails['data']['attributes']['web-url']
     projectURL = buildURL.split("/builds/")[0]
     projectName = projectURL.split('/').slice(-1)[0]
-    console.log(projectURL);
 
     let report = {
         totalScreenshots: 0,
