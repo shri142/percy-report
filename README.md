@@ -22,7 +22,7 @@ export PERCY_TOKEN=<read-only | full-access>
 <h3>Generate Report - Per Build</h3>
 
 ```sh
-percy-report [options] generate <buildId>
+percy-report generate <buildId> [options]
 ```
 Note: Build ID can be found in the URL of the Percy Dashboard as well as the REST API data.
 Example Build URL: `https://percy.io/<projectId>/PercyReporting/builds/<buildId>`
@@ -53,7 +53,7 @@ npx percy-report generate $BUILD_ID
 <h3>Generate Project Summary</h3>
 
 ```sh
-percy-report [options] summary <project-slug>
+percy-report summary <project-slug> [options]
 ```
 
 Note: Project Slug is equal to Project Name on your percy dashboard

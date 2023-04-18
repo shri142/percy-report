@@ -72,7 +72,9 @@
                 <tr>
                     <td>  Total Builds Unreviewed </td>
                     <td> 
+                        <% if(totalBuildsUnreviewed) { %>
                         <a href="#unreviewedBuilds">
+                            <% } %>
                             <%=totalBuildsUnreviewed%> 
                         </a>
                     </td>
@@ -81,7 +83,9 @@
                 <tr>
                     <td>  Total Builds Failed </td>
                     <td>
+                        <% if(totalBuildsFailed) { %>
                         <a href="#failedBuilds">
+                            <% } %>
                             <%=totalBuildsFailed%> 
                          </a>
                     </td>
@@ -113,7 +117,7 @@
                 </tr>
             </tbody>
         </table>
-
+        <% if(totalBuildsUnreviewed) { %>
         <section id="unreviewedBuilds">
             <table class="table table-bordered mx-auto mt-5">
                 <thead>
@@ -139,7 +143,8 @@
                 </tbody>
             </table>
         </section>
-
+        <% } %>
+        <% if(totalBuildsFailed) { %>
         <section id="failedBuilds">
             <table class="table table-bordered mx-auto mt-5">
                 <thead>
@@ -165,6 +170,7 @@
                 </tbody>
             </table>
         </section>
+        <% } %>
     </div>
 </body>
 </html>
