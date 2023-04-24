@@ -91,7 +91,7 @@ module.exports.Generate = async function (config) {
                 }
             } else {
                 let browser = getComparisonBrowser(comp)
-                compTag = device.nam
+                compTag = device.name
                 if (!report.browsers.includes(browser.name)) {
                     report.browsers.push(browser.name)
                 }
