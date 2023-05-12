@@ -83,6 +83,7 @@ module.exports.Generate = async function (config) {
             let head = images['head'] = getComparisonImage(comp, 'head-screenshot')
             let diff = images['diff'] = getComparisonImage(comp, 'diff-image')
             let compTag;
+            Object.assign(comparison, comp.attributes, { images }, isApp?{ device:compTag }:{browser:compTag});
             if (isApp) {
                 let device = getComparisonDevice(comp)
                 compTag = device.name
@@ -122,7 +123,7 @@ module.exports.Generate = async function (config) {
                 flagChanged = true
             }
             Object.assign(comparison, comp.attributes, { images }, isApp?{ device:compTag }:{browser:compTag})
-           
+
             
             comparison['diff-percentage'] = (comparison['diff-ratio'] * 100).toFixed(2)
             comparison['diff-color'] = "yellow"
