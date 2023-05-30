@@ -104,6 +104,7 @@ dist
 .tern-port
 
 Report/
+Reports/
 .DS_Store
 Summary/
 .vscode
