@@ -1,9 +1,13 @@
 {
-  "name": "percy-report",
+  "name": "@percy/report",
+  "description": "Package to generate a build report and project summary report for Percy, BrowserStack's visual testing platform",
   "version": "0.0.2",
-  "description": "Percy Report Generator",
   "main": "index.js",
-  "scripts": {},
+  "license": "MIT",
+  "author": "BrowserStack",
+  "scripts": {
+    "test" : "mocha ./test/**/*.test.js"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/browserstackce/percy-report.git"
@@ -16,7 +20,6 @@
   "bugs": {
     "url": "https://github.com/browserstackce/percy-report/issues"
   },
-  "license": "Apache-2.0",
   "bin": {
     "percy-report": "./bin/cli.js"
   },
@@ -30,6 +33,9 @@
     "ejs": "^3.1.8"
   },
   "devDependencies": {
-    "@percy/selenium-webdriver": "^1.0.2"
+    "@percy/selenium-webdriver": "^1.0.2",
+    "chai": "^4.3.7",
+    "mocha": "^10.2.0",
+    "nyc": "^15.1.0"
   }
 }
