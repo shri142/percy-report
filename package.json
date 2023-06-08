@@ -1,13 +1,20 @@
 {
   "name": "@percy/report",
   "description": "Package to generate a build report and project summary report for Percy, BrowserStack's visual testing platform",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "index.js",
   "license": "MIT",
-  "author": "BrowserStack",
+  "author": "BrowserStack Pvt Ltd",
   "scripts": {
-    "test" : "mocha ./test/**/*.test.js"
+    "test": "npx mocha ./test/**/*.test.js"
   },
+  "engines": {
+    "node": ">=14"
+  },
+  "files": [
+    "src/index.js",
+    "percy"
+  ],
   "repository": {
     "type": "git",
     "url": "git+https://github.com/browserstackce/percy-report.git"
@@ -20,11 +27,16 @@
   "bugs": {
     "url": "https://github.com/browserstackce/percy-report/issues"
   },
+  "homepage": "https://github.com/browserstackce/percy-report#readme",
+  "directories": {
+    "test": "test"
+  },
   "bin": {
     "percy-report": "./bin/cli.js"
   },
   "dependencies": {
     "@percy/cli": "^1.16.0",
+    "@percy/logger": "^1.25.0",
     "axios": "^0.27.2",
     "chromedriver": "^105.0.0",
     "commander": "^9.4.0",
