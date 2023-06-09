@@ -174,6 +174,7 @@ function downloadImage(options) {
             fs.writeFileSync(path, file.data)
         }).catch((err) => {
             console.error("Failed to Download: " + path)
+            console.error(err)
         })
         return `file:./${type}/${name}-${compTag}-${width}.png`;
     } catch {
