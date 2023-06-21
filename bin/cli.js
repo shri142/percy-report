@@ -5,10 +5,11 @@ const { ar } = require('date-fns/locale');
 const { Generate,Summary } = require('../src');
 const program = new Command();
 const {endOfDay,startOfDay} = require('date-fns')
+const {version} = require('../package.json')
 
 program.name('percy-report')
 .description('Generate Percy Reports & Download Images Locally')
-.version('0.0.2')
+.version(version)
 
 program.command('generate')
 .description('Genetate Report')
