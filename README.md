@@ -68,3 +68,23 @@ Note: Project Slug is equal to Project Name on your percy dashboard
 ```
 
 *Note: Interval between start date and end date should not exceed 30 days.*
+
+# Examples
+
+## Web Percy
+
+#### Build Report
+![percy_web_build_report](example/screenshots/percy_build_report_web.png)
+#### Summary Report
+![percy_web_summary_report](example/screenshots/percy_summary_report_web.png)
+
+## App Percy
+
+#### Build Report
+![percy_app_build_report](example/screenshots/percy_build_report_app.png)
+
+#### Summary Report
+![percy_app_summary_report](example/screenshots/percy_summary_report_app.png)
+
+
+
