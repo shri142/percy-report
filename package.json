@@ -1,7 +1,7 @@
 {
   "name": "@percy/report",
   "description": "Package to generate a build report and project summary report for Percy, BrowserStack's visual testing platform",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "main": "src/index.js",
   "license": "MIT",
   "author": "BrowserStack Pvt Ltd",
@@ -44,7 +44,8 @@
     "commander": "^9.4.0",
     "date-fns": "^2.29.3",
     "dotenv": "^16.0.3",
-    "ejs": "^3.1.8"
+    "ejs": "^3.1.8",
+    "p-queue": "^8.0.1"
   },
   "devDependencies": {
     "@percy/selenium-webdriver": "^1.0.2",
