@@ -9,6 +9,7 @@ const defaultConfig = {
     downloadPath: './Reports',
     diffThreshold: 1
 }
+let downloadQueue;
 module.exports.Generate = async function (config) {
     let { buildId, percyToken, apiUrl, downloadImages, downloadPath, diffThreshold } = Object.assign({}, defaultConfig, config)
     let axios = new Axios({
@@ -28,6 +29,11 @@ module.exports.Generate = async function (config) {
             throw res.data
         }
     })
+    if(!downloadQueue){
+        await import('p-queue').then(({default:PQueue})=>{
+            downloadQueue =  new PQueue({concurrency:1,intervalCap:5,interval:5000})
+        })
+    }
     const isApp = buildDetails['data']['attributes']['type'] == 'app'
     while (buildDetails.data && buildDetails.data.attributes.state !== 'finished') {
         console.log("Waiting for build to complete on Percy...")
@@ -101,10 +107,12 @@ module.exports.Generate = async function (config) {
                 }
             }
             if (downloadImages) {
+                
+                
                 ['base', 'head', 'diff'].forEach((val) => {
                     if (images[val]) {
                         images[val].file = downloadImage({
-                            name: String(snapshot?.['attributes'].name).replace('/', '-'),
+                            name: String(snapshot?.['attributes'].name),
                             compTag,
                             width: images[val].width,
                             type: val,
@@ -167,18 +175,23 @@ function downloadImage(options) {
     if (!fs.existsSync(`${baseDir}/${type}`)) {
         fs.mkdirSync(`${baseDir}/${type}`, { recursive: true })
     }
-    let path = `${baseDir}/${type}/${name}-${compTag}-${width}.png`
+    let composedName = `${name}-${compTag}-${width}.png`.replace(/[\\\/]/g,'_')
+    let path = `${baseDir}/${type}/${composedName}`
     try {
-        new Axios({ responseType: 'arraybuffer', url: url }).get(url).then((file) => {
+        downloadQueue.add(()=>new Axios({ responseType: 'arraybuffer', url: url }).get(url).then((file) => {
             console.log("Download Complete:" + path)
             fs.writeFileSync(path, file.data)
         }).catch((err) => {
             console.error("Failed to Download: " + path)
-            console.error(err)
-        })
-        return `file:./${type}/${name}-${compTag}-${width}.png`;
-    } catch {
-
+            if(err.code == 'ECONNRESET'){
+                console.log('Retrying '+ path)
+            }else{
+                console.error(`Failed ${path}, error: ${err.code}`)
+            }
+        }))
+        return `file:./${type}/${composedName}`;
+    } catch(err) {
+        
     }
 }
 
