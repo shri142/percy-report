@@ -135,7 +135,7 @@ module.exports.Generate = async function (config) {
             
             comparison['diff-percentage'] = (comparison['diff-ratio'] * 100).toFixed(2)
             comparison['diff-color'] = "yellow"
-            if (comparison['diff-percentage'] > diffThreshold) {
+            if (Number(comparison['diff-percentage']) > Number(diffThreshold)) {
                 comparison['diff-color'] = "red"
             }
             return comparison
