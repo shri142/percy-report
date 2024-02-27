@@ -22,15 +22,17 @@ function HtmlReportGenerator(config, jsonReport, isApp) {
             buildId,
             downloadPath
         } = config
-        let template_path = path.resolve(__dirname, 'template/report.html')
+        let template_path = path.resolve(__dirname, 'template/react-standalone.html')
         const template = fs.readFileSync(template_path, {
             encoding: 'utf-8'
         }).toString()
         let htmlReport = ejs.render(template, {
-            buildId,
-            ...jsonReport
+            data: {
+                buildId,
+                ...jsonReport
+            }
         })
-        fs.writeFileSync(`${downloadPath}/${buildId}/report.html`, htmlReport)
+        fs.writeFileSync(`${downloadPath}/${buildId}/react-standalone.html`, htmlReport)
     }
 }
 
