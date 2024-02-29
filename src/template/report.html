@@ -307,7 +307,7 @@
                 const comparison = snapshot && snapshot.comparisons.at(0)
                 return {
                     snapshots: 'changed',
-                    diffThreashold: 0,
+                    diffThreshold: 0,
                     search: '',
                     activeSnapshot: snapshot ? BuildData.details.at(0).name : '',
                     activeBrowser: comparison ? comparison.browser : null,
@@ -324,7 +324,7 @@
                 let category = SnapshotData[filters.snapshots]
                 let snapshots = category
                 if (filters.snapshots == 'changed') {
-                    snapshots = snapshots.filter((snapshot) => snapshot['diff-ratios'].some((r) => r >= filters.diffThreashold))
+                    snapshots = snapshots.filter((snapshot) => snapshot['diff-ratios'].some((r) => r >= filters.diffThreshold))
                 }
                 if (filters.search) {
                     snapshots = snapshots.filter((snapshot) => snapshot.name.toLowerCase().includes(filters.search.toLowerCase()))
@@ -424,11 +424,11 @@
                         </div>
                         {filters && filters.snapshots == 'changed' ? <div className="p-2 flex flex-col">
                             <div className="font-bold mb-2 flex justify-between">
-                                <span>Diff Threashold</span>
+                                <span>Diff Threshold</span>
                                 <span>{">"}</span>
-                                <span>{filters.diffThreashold}%</span>
+                                <span>{filters.diffThreshold}%</span>
                             </div>
-                            <input onChange={(e) => SetFilter({ diffThreashold: Number(e.target.value) })} type="range" min="0" max="100" value={filters.diffThreashold} />
+                            <input onChange={(e) => SetFilter({ diffThreshold: Number(e.target.value) })} type="range" min="0" max="100" value={filters.diffThreshold} />
                         </div> : null}
                     </div>
                     <div classNamef="flex flex-col h-full" id="thumbnails" className="p-2">
@@ -492,31 +492,6 @@
         }
         ReactDOM.render(<App />, document.getElementById('root'));
 
-    </script>
-    <script>
-        let ismdwn = 0
-        let split = document.getElementById('split')
-        let thumbnails = document.getElementById('thumbnails')
-        split.addEventListener('mousedown', mD)
-
-        function mD(event) {
-            ismdwn = 1
-            document.body.addEventListener('mousemove', mV)
-            document.body.addEventListener('mouseup', end)
-        }
-
-        function mV(event) {
-            if (ismdwn === 1) {
-                pan1.style.flexBasis = event.clientX + "px"
-            } else {
-                end()
-            }
-        }
-        const end = (e) => {
-            ismdwn = 0
-            document.body.removeEventListener('mouseup', end)
-            split.removeEventListener('mousemove', mV)
-        }
     </script>
 </body>
 
