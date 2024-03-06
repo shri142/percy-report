@@ -1,7 +1,6 @@
 #!/usr/bin/env node
 require('dotenv').config()
 const { Command } = require('commander');
-const { ar } = require('date-fns/locale');
 const { Generate,Summary } = require('../src');
 const program = new Command();
 const {endOfDay,startOfDay} = require('date-fns')
@@ -15,7 +14,6 @@ program.command('generate')
 .description('Genetate Report')
 .argument('<buildId>')
 .option('--percy-token <percyToken>',"Percy ReadOnly or FullAccess Token",process.env.PERCY_TOKEN)
-.option('--diff-threshold <diffThreshold>',"Percy Diff Percentage Threshold to highlight")
 .option('--download-path <downloadPath>',"Directory path where to generate the report","./Reports")
 .option('--download-images',"If present Images will be downloaded",false)
 .action(async (args,options)=>{

@@ -92,9 +92,9 @@ module.exports.Generate = async function (config) {
             Object.assign(comparison, comp.attributes, { images }, isApp?{ device:compTag }:{browser:compTag});
             if (isApp) {
                 let device = getComparisonDevice(comp)
-                compTag = device.name
-                if(!report.devices.includes(device.name)){
-                    report.devices.push(device.name)
+                compTag = `${device.name} (${device['os-name']} ${device['os-version']})`
+                if(!report.devices.includes(compTag)){
+                    report.devices.push(compTag)
                 }
             } else {
                 let browser = getComparisonBrowser(comp)

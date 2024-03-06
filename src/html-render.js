@@ -3,35 +3,21 @@ const ejs = require('ejs');
 const path = require('path')
 
 function HtmlReportGenerator(config, jsonReport, isApp) {
-    if (isApp) {
-        let {
-            buildId,
-            downloadPath
-        } = config
-        let template_path = path.resolve(__dirname, 'template/app-report.html')
-        const template = fs.readFileSync(template_path, {
-            encoding: 'utf-8'
-        }).toString()
-        let htmlReport = ejs.render(template, {
-            buildId,
-            ...jsonReport
-        })
-        fs.writeFileSync(`${downloadPath}/${buildId}/app-report.html`, htmlReport)
-    } else {
-        let {
-            buildId,
-            downloadPath
-        } = config
-        let template_path = path.resolve(__dirname, 'template/report.html')
-        const template = fs.readFileSync(template_path, {
-            encoding: 'utf-8'
-        }).toString()
-        let htmlReport = ejs.render(template, {
+    let {
+        buildId,
+        downloadPath
+    } = config
+    let template_path = path.resolve(__dirname, 'template/report.html')
+    const template = fs.readFileSync(template_path, {
+        encoding: 'utf-8'
+    }).toString()
+    let htmlReport = ejs.render(template, {
+        data: {
             buildId,
             ...jsonReport
-        })
-        fs.writeFileSync(`${downloadPath}/${buildId}/report.html`, htmlReport)
-    }
+        }
+    })
+    fs.writeFileSync(`${downloadPath}/${buildId}/report.html`, htmlReport)
 }
 
 function HtmlSummary(summary, filename, isApp) {
