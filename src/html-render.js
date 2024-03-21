@@ -12,10 +12,10 @@ function HtmlReportGenerator(config, jsonReport, isApp) {
         encoding: 'utf-8'
     }).toString()
     let htmlReport = ejs.render(template, {
-        data: {
+        data: Buffer.from(JSON.stringify({
             buildId,
             ...jsonReport
-        }
+        })).toString('base64')
     })
     fs.writeFileSync(`${downloadPath}/${buildId}/report.html`, htmlReport)
 }
