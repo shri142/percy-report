@@ -1,7 +1,7 @@
 {
   "name": "@percy/report",
   "description": "Package to generate a build report and project summary report for Percy, BrowserStack's visual testing platform",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "main": "src/index.js",
   "license": "MIT",
   "author": "BrowserStack Pvt Ltd",
