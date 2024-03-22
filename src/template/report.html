@@ -197,7 +197,7 @@
                 let diffRatios = current.comparisons.map((c) => Number(c['diff-percentage']))
                 current['diff-ratios'] = diffRatios;
                 current['max-diff'] = Math.max(...diffRatios);
-                const isChanged = diffRatios.some((d) => d > 0)
+                const isChanged = current.comparisons.some((c)=>c.images && (c.images.diff || !c.images.base))
                 if (isChanged) {
                     map.changed.push(current)
                 } else {
@@ -239,7 +239,7 @@
         const Picker = function (props) {
             React.useEffect(() => {
                 if (props.items.length > 0 && !props.items.includes(props.value)) {
-                    props.onChange(props.items.at(0))
+                    props.onChange(props.items[0])
                 }
             }, [props])
             if (!props.items || props.items.length == 0) {
@@ -310,13 +310,13 @@
 
         function App() {
             const [filters, SetFilters] = React.useState(() => {
-                const snapshot = BuildData.details.at(0)
-                const comparison = snapshot && snapshot.comparisons.at(0)
+                const snapshot = BuildData.details[0]
+                const comparison = snapshot && snapshot.comparisons[0]
                 return {
                     snapshots: 'changed',
                     diffThreshold: 0,
                     search: '',
-                    activeSnapshot: snapshot ? BuildData.details.at(0).name : '',
+                    activeSnapshot: snapshot ? BuildData.details[0].name : '',
                     activeBrowser: comparison ? comparison.browser : null,
                     activeWidth: comparison ? comparison.width : null,
                     activeDevice: comparison ? comparison.device : null
@@ -400,7 +400,7 @@
             }
             const PrevSnapshot = () => {
                 if (activeSnapshot && activeSnapshot.index > 0) {
-                    SetFilter({ activeSnapshot: snapshots.at(activeSnapshot.index - 1).name })
+                    SetFilter({ activeSnapshot: snapshots[activeSnapshot.index - 1].name })
                 }
             }
             const getImage = (comp, kind) => {
@@ -447,14 +447,6 @@
                             <div className={`flex p-1 rounded`}>
                                 <p className="text-start flex-1 capitalize">Unreviewed Snapshots</p>
                                 <p >{BuildData['unreviewedScreenshots']}</p>
-                            </div>
-                            <div className={`flex p-1 rounded`}>
-                                <p className="text-start flex-1 capitalize">Total Screenshots</p>
-                                <p >{BuildData['totalScreenshots']}</p>
-                            </div>
-                            <div className={`flex p-1 rounded`}>
-                                <p className="text-start flex-1 capitalize">Unreviewed Screenshots</p>
-                                <p >{BuildData['unreviewedSnapshots']}</p>
                             </div>
                         </div>
                     </div>
