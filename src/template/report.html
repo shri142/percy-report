@@ -281,7 +281,7 @@
             const [loadingDIFF, SetLoadingDiff] = React.useState(false)
             const headImage = React.useRef()
             const diffImage = React.useRef()
-            const loading = loadingDIFF || loadingHead
+            const loading =  loadingHead
             React.useEffect(() => {
                 setTimeout(() => {
                     SetLoadingHead(headImage.current ? !headImage.current.complete : true)
