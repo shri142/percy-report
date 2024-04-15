@@ -11,7 +11,11 @@ function HtmlReportGenerator(config, jsonReport, isApp) {
     const template = fs.readFileSync(template_path, {
         encoding: 'utf-8'
     }).toString()
+    const babel = fs.readFileSync(path.resolve(__dirname,'template/babel.min.js'),{encoding:'utf8'}).toString()
     let htmlReport = ejs.render(template, {
+        babel:babel,
+        reactdom:fs.readFileSync(path.resolve(__dirname,'template/react-dom.production.min.js')).toString('utf-8'),
+        react: fs.readFileSync(path.resolve(__dirname,'template/react.production.min.js')).toString('utf-8'),
         data: Buffer.from(JSON.stringify({
             buildId,
             ...jsonReport
