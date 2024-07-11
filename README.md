@@ -46,7 +46,7 @@ Step 3 : Execute the Percy Report Generation Step<br>
 [Example](/example/percy.sh):
 ```sh
 export PERCY_TOKEN=<your-percy-token>
-BUILD_ID=$(npx percy exec -- {Test Command} | grep build | awk -F "/" '{print $NF}')
+BUILD_ID=$(npx percy exec -- {Test Command} | grep https:\/\/percy.io\/.*\/builds | awk -F "/" '{print $NF}')
 npx percy-report generate $BUILD_ID
 ```
 

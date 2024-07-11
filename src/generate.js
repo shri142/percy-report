@@ -34,7 +34,7 @@ module.exports.Generate = async function (config) {
             downloadQueue =  new PQueue({concurrency:1,intervalCap:5,interval:5000})
         })
     }
-    const isApp = buildDetails['data']['attributes']['type'] == 'app'
+    const useCompTag = buildDetails['data']['attributes']['type'] == 'app' || buildDetails['data']['attributes']['type'] == 'automate'
     while (buildDetails.data && buildDetails.data.attributes.state !== 'finished') {
         console.log("Waiting for build to complete on Percy...")
         await wait(30000)
@@ -89,8 +89,8 @@ module.exports.Generate = async function (config) {
             let head = images['head'] = getComparisonImage(comp, 'head-screenshot')
             let diff = images['diff'] = getComparisonImage(comp, 'diff-image')
             let compTag;
-            Object.assign(comparison, comp.attributes, { images }, isApp?{ device:compTag }:{browser:compTag});
-            if (isApp) {
+            Object.assign(comparison, comp.attributes, { images }, useCompTag?{ device:compTag }:{browser:compTag});
+            if (useCompTag) {
                 let device = getComparisonDevice(comp)
                 compTag = `${device.name} (${device['os-name']} ${device['os-version']})`
                 if(!report.devices.includes(compTag)){
@@ -130,7 +130,7 @@ module.exports.Generate = async function (config) {
                 report['unreviewedScreenshots']++
                 flagChanged = true
             }
-            Object.assign(comparison, comp.attributes, { images }, isApp?{ device:compTag }:{browser:compTag})
+            Object.assign(comparison, comp.attributes, { images }, useCompTag?{ device:compTag }:{browser:compTag})
 
             
             comparison['diff-percentage'] = (comparison['diff-ratio'] * 100).toFixed(2)
@@ -146,7 +146,7 @@ module.exports.Generate = async function (config) {
         return formattedSnapshot
     })
     fs.writeFileSync(`${baseDir}/report.json`, JSON.stringify(report, undefined, 2))
-    HtmlReportGenerator(config, report, isApp)
+    HtmlReportGenerator(config, report, useCompTag)
     console.log("Build Report Generated.")
     return report
 }

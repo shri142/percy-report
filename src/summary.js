@@ -35,7 +35,7 @@ module.exports.Summary = async function (opts) {
             throw res.data
         }
     })
-    const isApp = project['data']['attributes']['type'] == 'app'
+    const useCompTag = project['data']['attributes']['type'] == 'app' || project['data']['attributes']['type'] == 'automate'
     let projectId = project.data.id
     let projectURL = "https://percy.io/"+project.data.attributes['full-slug']
     let projectName = project.data.attributes.name
@@ -131,7 +131,7 @@ module.exports.Summary = async function (opts) {
         fs.mkdirSync('Summary',{recursive:true})
     }
     fs.writeFileSync(`Summary/${summary.projectName}-${Date.now()}.json`,JSON.stringify(summary,undefined,2))
-    HtmlSummary(summary,`Summary/${summary.projectName}-${Date.now()}.html`, isApp)
+    HtmlSummary(summary,`Summary/${summary.projectName}-${Date.now()}.html`, useCompTag)
     console.log("Summary report generated")
     return summary;
 
