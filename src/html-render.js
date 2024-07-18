@@ -2,7 +2,7 @@ const fs = require('fs')
 const ejs = require('ejs');
 const path = require('path')
 
-function HtmlReportGenerator(config, jsonReport, isApp) {
+function HtmlReportGenerator(config, jsonReport, useCompTag) {
     let {
         buildId,
         downloadPath
@@ -24,8 +24,8 @@ function HtmlReportGenerator(config, jsonReport, isApp) {
     fs.writeFileSync(`${downloadPath}/${buildId}/report.html`, htmlReport)
 }
 
-function HtmlSummary(summary, filename, isApp) {
-    if (isApp) {
+function HtmlSummary(summary, filename, useCompTag) {
+    if (useCompTag) {
         let template_path = path.resolve(__dirname, 'template/app-summary.html')
         const template = fs.readFileSync(template_path, {
             encoding: "utf-8"
