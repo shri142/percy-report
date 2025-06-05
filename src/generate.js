@@ -49,17 +49,41 @@ module.exports.Generate = async function (config) {
             throw new Error("Build Failed with an Error on Percy Server. Please check your percy dashboard for more information.")
         }
     }
-    
+
     console.log(`Generating report for Build ID ${buildId}`)
-    let snapshotsData = await axios.get(`/snapshots?build_id=${buildId}`, { responseType: 'json' }).then((res) => {
-        if (res.status == 200) {
-            let parser = new Parser(res.data)
-            let data = parser.getSimplified()
-            return data
+    // let snapshotsData = await axios.get(`/snapshots?build_id=${buildId}`, { responseType: 'json' }).then((res) => {
+    //     if (res.status == 200) {
+    //         let parser = new Parser(res.data)
+    //         let data = parser.getSimplified()
+    //         return data
+    //     } else {
+    //         throw res.data
+    //     }
+    // })
+    //
+    let snapshotsData = [];
+    let cursor = null;
+    let hasMore = true;
+
+    while (hasMore) {
+        const cursorParam = cursor ? `&page[cursor]=${cursor}` : '';
+        const response = await axios.get(`/snapshots?build_id=${buildId}${cursorParam}`, { responseType: 'json' });
+        if (response.status === 200) {
+            let parser = new Parser(response.data);
+            let data = parser.getSimplified();
+            if (data.length > 0) {
+                snapshotsData.push(...data);
+                cursor = data[data.length - 1].id; // update cursor to last snapshot ID
+                // If less than a typical page size (usually 20), stop
+                // hasMore = data.length >= 20;
+            } else {
+                hasMore = false;
+            }
         } else {
-            throw res.data
+            throw response.data;
         }
-    })
+    }
+
     buildURL = buildDetails['data']['attributes']['web-url']
     projectURL = buildURL.split("/builds/")[0]
     projectName = projectURL.split('/').slice(-1)[0]
